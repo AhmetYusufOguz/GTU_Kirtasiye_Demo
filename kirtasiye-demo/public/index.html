@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kırtasiye Çıktı</title>
+    <style>
+      :root {
+        --paper: #f4f6f9;
+        --card: #ffffff;
+        --ink: #172033;
+        --muted: #5d6882;
+        --line: #d5dae3;
+        --cyan: #0a84b6;
+        --cyan-dark: #076a93;
+        --magenta: #d6336c;
+        --ok: #1d7a4d;
+        --err: #b3261e;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          16px/1.5 "Segoe UI Variable",
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+      main {
+        max-width: 440px;
+        margin: 0 auto;
+        padding: 24px 16px 48px;
+      }
+      h1 {
+        font-size: 24px;
+        margin: 0 0 4px;
+        letter-spacing: -0.01em;
+      }
+      h2 {
+        font-size: 17px;
+        margin: 0 0 12px;
+      }
+      .sub {
+        color: var(--muted);
+        margin: 0 0 24px;
+      }
+      section {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .filebtn {
+        display: block;
+        width: 100%;
+        padding: 18px 12px;
+        border: 2px dashed var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+        color: var(--ink);
+        font: inherit;
+        cursor: pointer;
+        text-align: center;
+      }
+      .filebtn:hover,
+      .filebtn:focus-visible {
+        border-color: var(--cyan);
+        outline: none;
+      }
+      #file {
+        display: none;
+      }
+      .fileinfo {
+        margin: 12px 0 0;
+        color: var(--muted);
+        word-break: break-all;
+      }
+      .fileinfo b {
+        color: var(--ink);
+      }
+      .opts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .opt {
+        position: relative;
+        border: 1.5px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        cursor: pointer;
+        background: var(--card);
+      }
+      .opt input {
+        position: absolute;
+        opacity: 0;
+      }
+      .opt:has(input:checked) {
+        border-color: var(--cyan);
+        box-shadow: 0 0 0 1px var(--cyan) inset;
+      }
+      .opt:has(input:focus-visible) {
+        outline: 2px solid var(--cyan);
+        outline-offset: 2px;
+      }
+      .opt strong {
+        display: block;
+      }
+      .opt span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .dots {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 6px;
+      }
+      .dots i {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: block;
+      }
+      .total {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+      .total .amt {
+        font-size: 28px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+      button.primary {
+        width: 100%;
+        margin-top: 14px;
+        padding: 14px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--cyan);
+        color: #fff;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button.primary:hover:not(:disabled) {
+        background: var(--cyan-dark);
+      }
+      button.primary:disabled {
+        background: #b8c1d1;
+        cursor: not-allowed;
+      }
+      button.ghost {
+        padding: 10px 14px;
+        border: 1.5px solid var(--cyan);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--cyan-dark);
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .err {
+        color: var(--err);
+        margin: 10px 0 0;
+        min-height: 1.2em;
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      /* Sipariş kodu: kuyruk fişi */
+      .ticket {
+        position: relative;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 20px 16px;
+        margin-bottom: 16px;
+      }
+      .ticket::before,
+      .ticket::after {
+        content: "";
+        position: absolute;
+        top: 96px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--paper);
+        border: 1px solid var(--line);
+      }
+      .ticket::before {
+        left: -10px;
+      }
+      .ticket::after {
+        right: -10px;
+      }
+      .ticket .lbl {
+        color: var(--muted);
+        margin: 0;
+      }
+      .code {
+        font:
+          700 40px/1.2 ui-monospace,
+          "Cascadia Mono",
+          Consolas,
+          monospace;
+        letter-spacing: 0.18em;
+        margin: 4px 0 18px;
+      }
+      .perf {
+        border-top: 2px dashed var(--line);
+        margin: 0 -16px 14px;
+      }
+      .warn {
+        margin: 0 0 14px;
+        font-weight: 600;
+      }
+      .meta {
+        color: var(--muted);
+        margin: 0 0 14px;
+      }
+
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+      .row input[type="text"] {
+        flex: 1;
+        min-width: 0;
+        padding: 10px 12px;
+        border: 1.5px solid var(--line);
+        border-radius: 8px;
+        font: inherit;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .row input[type="text"]:focus-visible {
+        outline: 2px solid var(--cyan);
+        border-color: var(--cyan);
+      }
+      .status {
+        margin: 12px 0 0;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 99px;
+        font-weight: 600;
+        font-size: 14px;
+        background: #e6edf7;
+        color: var(--ink);
+      }
+      .badge.odendi,
+      .badge.cikti_alindi {
+        background: #dff3e8;
+        color: var(--ok);
+      }
+      .badge.yazdiriliyor {
+        background: #e0f1f8;
+        color: var(--cyan-dark);
+      }
+      .staff {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 14px;
+      }
+      .staff a {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Kırtasiye Çıktı</h1>
+      <p class="sub">PDF'ini yükle, kodunu al, kasada göster.</p>
+
+      <div id="orderForm">
+        <section>
+          <h2>1. Dosyanı seç</h2>
+          <button type="button" class="filebtn" id="pick">
+            PDF dosyası seç
+          </button>
+          <input type="file" id="file" accept="application/pdf,.pdf" />
+          <p class="fileinfo hidden" id="fileInfo"></p>
+
+          <h2 style="margin-top: 20px">2. Baskı türü</h2>
+          <div class="opts">
+            <label class="opt">
+              <input type="radio" name="color" value="bw" checked />
+              <div class="dots"><i style="background: #172033"></i></div>
+              <strong>Siyah-beyaz</strong><span id="pBw"></span>
+            </label>
+            <label class="opt">
+              <input type="radio" name="color" value="color" />
+              <div class="dots">
+                <i style="background: #00a6d6"></i
+                ><i style="background: #d6336c"></i
+                ><i style="background: #f2c200"></i>
+              </div>
+              <strong>Renkli</strong><span id="pColor"></span>
+            </label>
+          </div>
+
+          <div class="total">
+            <span
+              >Toplam<br /><small id="calc" style="color: var(--muted)"
+                >Dosya seçilmedi</small
+              ></span
+            >
+            <span class="amt" id="amt">0 TL</span>
+          </div>
+          <button class="primary" id="send" disabled>Siparişi gönder</button>
+          <p class="err" id="err" role="alert"></p>
+        </section>
+      </div>
+
+      <div id="result" class="hidden">
+        <div class="ticket">
+          <p class="lbl">Sipariş kodun</p>
+          <div class="code" id="codeText"></div>
+          <div class="perf"></div>
+          <p class="warn">Kodunu kaybetme. Kod olmadan çıktı alınamaz.</p>
+          <p class="meta" id="resMeta"></p>
+          <button class="ghost" id="copy">Kodu kopyala</button>
+          <button class="ghost" id="again" style="margin-left: 6px">
+            Yeni sipariş
+          </button>
+        </div>
+      </div>
+
+      <section>
+        <h2>Siparişimi sorgula</h2>
+        <div class="row">
+          <input
+            type="text"
+            id="q"
+            placeholder="Kod"
+            maxlength="6"
+            autocomplete="off"
+          />
+          <button class="ghost" id="lookup">Sorgula</button>
+        </div>
+        <div class="status" id="qres"></div>
+      </section>
+
+      <p class="staff"><a href="/cashier.html">Kasa girişi</a></p>
+    </main>
+
+    <script>
+      const LABEL = {
+        bekliyor: "Ödeme bekliyor",
+        odendi: "Ödendi, yazdırılabilir",
+        yazdiriliyor: "Yazdırılıyor",
+        cikti_alindi: "Çıktı alındı",
+      };
+      const $ = (id) => document.getElementById(id);
+      let prices = { bw: 1, color: 5 },
+        pages = 0,
+        current = null;
+
+      const money = (n) =>
+        n.toLocaleString("tr-TR", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        }) + " TL";
+      const color = () =>
+        document.querySelector("input[name=color]:checked").value;
+
+      fetch("/api/prices")
+        .then((r) => r.json())
+        .then((p) => {
+          prices = p;
+          $("pBw").textContent = money(p.bw) + " / sayfa";
+          $("pColor").textContent = money(p.color) + " / sayfa";
+          updatePrice();
+        });
+
+      function updatePrice() {
+        const total = pages * prices[color()];
+        $("amt").textContent = money(total);
+        $("calc").textContent = pages
+          ? `${pages} sayfa × ${money(prices[color()])}`
+          : "Dosya seçilmedi";
+      }
+
+      $("pick").onclick = () => $("file").click();
+      document
+        .querySelectorAll("input[name=color]")
+        .forEach((r) => (r.onchange = updatePrice));
+
+      $("file").onchange = async () => {
+        const f = $("file").files[0];
+        pages = 0;
+        current = null;
+        $("send").disabled = true;
+        $("err").textContent = "";
+        updatePrice();
+        if (!f) return;
+        if (!/\.pdf$/i.test(f.name)) {
+          $("err").textContent =
+            "Sadece PDF yükleyebilirsin. Dosyanı önce PDF'e çevir.";
+          return;
+        }
+        const fd = new FormData();
+        fd.append("file", f);
+        $("fileInfo").classList.remove("hidden");
+        $("fileInfo").textContent = "Sayfalar sayılıyor...";
+        try {
+          const r = await fetch("/api/preview", { method: "POST", body: fd });
+          const d = await r.json();
+          if (!r.ok) throw new Error(d.error);
+          pages = d.pages;
+          current = f;
+          $("fileInfo").innerHTML = "";
+          const b = document.createElement("b");
+          b.textContent = f.name;
+          $("fileInfo").append(b, ` · ${pages} sayfa`);
+          $("send").disabled = false;
+          updatePrice();
+        } catch (e) {
+          $("fileInfo").classList.add("hidden");
+          $("err").textContent = e.message;
+        }
+      };
+
+      $("send").onclick = async () => {
+        if (!current) return;
+        $("send").disabled = true;
+        $("err").textContent = "";
+        const fd = new FormData();
+        fd.append("file", current);
+        fd.append("color", color());
+        try {
+          const r = await fetch("/api/orders", { method: "POST", body: fd });
+          const d = await r.json();
+          if (!r.ok) throw new Error(d.error);
+          $("codeText").textContent = d.code;
+          $("resMeta").textContent =
+            `${d.pages} sayfa · ${color() === "bw" ? "Siyah-beyaz" : "Renkli"} · ${money(d.price)}. Ödemeyi kasada yaparsın.`;
+          $("orderForm").classList.add("hidden");
+          $("result").classList.remove("hidden");
+          $("q").value = d.code;
+        } catch (e) {
+          $("err").textContent = e.message;
+          $("send").disabled = false;
+        }
+      };
+
+      $("copy").onclick = async () => {
+        const text = $("codeText").textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          // http üzerinden (LAN) clipboard API çalışmaz, eski yöntem
+          const t = document.createElement("textarea");
+          t.value = text;
+          document.body.appendChild(t);
+          t.select();
+          document.execCommand("copy");
+          t.remove();
+        }
+        $("copy").textContent = "Kopyalandı";
+        setTimeout(() => ($("copy").textContent = "Kodu kopyala"), 1500);
+      };
+
+      $("again").onclick = () => {
+        $("result").classList.add("hidden");
+        $("orderForm").classList.remove("hidden");
+        $("file").value = "";
+        pages = 0;
+        current = null;
+        $("send").disabled = true;
+        $("fileInfo").classList.add("hidden");
+        updatePrice();
+      };
+
+      async function lookup() {
+        const code = $("q").value.trim();
+        if (!code) return;
+        const box = $("qres");
+        box.textContent = "";
+        const r = await fetch("/api/orders/" + encodeURIComponent(code));
+        const d = await r.json();
+        if (!r.ok) {
+          box.textContent = d.error;
+          return;
+        }
+        const badge = document.createElement("span");
+        badge.className = "badge " + d.status;
+        badge.textContent = LABEL[d.status] || d.status;
+        const info = document.createElement("div");
+        info.style.color = "var(--muted)";
+        info.textContent = `${d.fileName} · ${d.pages} sayfa · ${d.color === "bw" ? "Siyah-beyaz" : "Renkli"} · ${money(d.price)}`;
+        box.append(badge, info);
+      }
+      $("lookup").onclick = lookup;
+      $("q").onkeydown = (e) => {
+        if (e.key === "Enter") lookup();
+      };
+    </script>
+  </body>
+</html>
