@@ -15,6 +15,16 @@ Kırtasiyede çıktı alma sürecindeki iki darboğazı (yazıcı bilgisayarı b
 
 Üç ayrı ekran vardır: müşteri sayfası (telefon), kasa paneli (tarayıcı) ve yazıcı bilgisayarı uygulaması (Electron).
 
+## Web demosu (GitHub Pages)
+
+Kurulum yapmadan denemek için: **<https://ahmetyusufoguz.github.io/GTU_Kirtasiye_Demo/>**
+
+Bu sürüm sunucu ve Electron olmadan tamamen tarayıcıda çalışır. Siparişler ve PDF'ler yalnızca o tarayıcıda tutulur (localStorage + IndexedDB), başka cihazlarla paylaşılmaz. Sol alttaki **Demo** çubuğundan üç ekran ayrı sekmelerde açılır: Müşteri (`index.html`), Kasa (`cashier.html`), Yazıcı (`printer.html`). Sekmeler yan yana tutulursa "Ödendi" basıldığında yazıcı ekranındaki kilidin açılması görünür.
+
+Farklar: yazdırma tarayıcının yazdırma penceresiyle yapılır ve tarayıcı onaylanıp onaylanmadığını bildirmediği için sipariş "Yazdırılıyor"da kalır. Görevli **"Çıktı alındı olarak işaretle"** ile tamamlar.
+
+Site, `main`'e her push'ta [pages.yml](.github/workflows/pages.yml) ile otomatik yayınlanır. [pages/build.js](kirtasiye-demo/pages/build.js) mevcut sayfaları kopyalayıp sunucu yerine [pages/mock-api.js](kirtasiye-demo/pages/mock-api.js)'i bağlar. Yerelde üretmek için: `node kirtasiye-demo/pages/build.js` (çıktı `_site/`).
+
 ## Kurulum (yalnızca bir kez)
 
 Kurulumu **yazıcıya bağlı bilgisayarda** yap. Teknik bilgi gerekmez, her adımda ne yapacağın yazıyor.
