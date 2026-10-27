@@ -1,6 +1,6 @@
 # Kırtasiye Çıktı Sistemi
 
-Kırtasiyede çıktı alma sürecindeki iki darboğazı (yazıcı bilgisayarı başında dosya bulma ve kasada sayfa sayma) ortadan kaldıran sistemin **tek bilgisayarda çalışan demosu**. GTÜ yapay zekâ kulübü "Claude's Plan" yarışması için hazırlandı.
+Kırtasiyede çıktı alma sürecindeki iki darboğazı (yazıcı bilgisayarı başında dosya bulma ve kasada sayfa sayma) ortadan kaldıran sistemin demosu. GTÜ Yapay Zekâ Kulübü **"Claude's Plan"** yarışması için hazırlandı.
 
 ## Ne işe yarar?
 
@@ -8,199 +8,198 @@ Kırtasiyede çıktı alma sürecindeki iki darboğazı (yazıcı bilgisayarı b
 
 **Bu sistemle:**
 
-1. Müşteri telefondan siteye **PDF yükler**, siyah-beyaz/renkli seçer, **fiyatı anlık görür** ve bir **sipariş kodu** alır.
+1. Müşteri telefondan siteye **PDF yükler**, siyah-beyaz/renkli seçer, **fiyatı anlık görür** ve 6 haneli bir **sipariş kodu** alır.
 2. Yazıcı bilgisayarındaki masaüstü uygulaması dosyayı sipariş anında **önceden indirir**.
 3. Müşteri kasaya kodu gösterir, görevli ödemeyi alıp siparişi **"Ödendi"** yapar.
-4. Müşteri kodu yazıcı bilgisayarına girer, **yazdırma ödeme onayına kadar kilitlidir**. Ödeme onaylanınca kilit kendiliğinden açılır ve çıktı alınır.
+4. Müşteri kodu yazıcı bilgisayarına girer; **yazdırma ödeme onayına kadar kilitlidir**. Ödeme onaylanınca kilit kendiliğinden açılır ve çıktı alınır.
+5. Müşteri kendi ekranından sipariş durumunun (**Ödeme bekliyor → Ödendi → Yazdırılıyor → Çıktı alındı**) canlı değişimini anlık takip eder.
 
-Üç ayrı ekran vardır: müşteri sayfası (telefon), kasa paneli (tarayıcı) ve yazıcı bilgisayarı uygulaması (Electron).
+---
 
-## Web demosu (GitHub Pages)
+## Nasıl Deneyebilirim? (2 Farklı Yöntem)
 
-Kurulum yapmadan denemek için: **<https://ahmetyusufoguz.github.io/GTU_Kirtasiye_Demo/>**
+Projeyi denemek için iki seçeneğin var:
+- **Yöntem 1 — Tarayıcıdan Hızlı Test (Kurulumsuz):** Bilgisayarına hiçbir şey kurmadan, doğrudan internet tarayıcında 1 dakikada tüm akışı dene.
+- **Yöntem 2 — Bilgisayara Kurulum (Tam Sistem):** Masaüstü uygulamasını bilgisayarına kurup gerçek telefonundan QR kod okutarak dene.
 
-Bu sürüm sunucu ve Electron olmadan tamamen tarayıcıda çalışır. Siparişler ve PDF'ler yalnızca o tarayıcıda tutulur (localStorage + IndexedDB), başka cihazlarla paylaşılmaz. Sol alttaki **Demo** çubuğundan üç ekran ayrı sekmelerde açılır: Müşteri (`index.html`), Kasa (`cashier.html`), Yazıcı (`printer.html`). Sekmeler yan yana tutulursa "Ödendi" basıldığında yazıcı ekranındaki kilidin açılması görünür.
+---
 
-Farklar: yazdırma tarayıcının yazdırma penceresiyle yapılır ve tarayıcı onaylanıp onaylanmadığını bildirmediği için sipariş "Yazdırılıyor"da kalır. Görevli **"Çıktı alındı olarak işaretle"** ile tamamlar.
+## Yöntem 1: Tarayıcıdan Hızlı Test (Kurulumsuz Web Demosu)
 
-Site, `main`'e her push'ta [pages.yml](.github/workflows/pages.yml) ile otomatik yayınlanır. [pages/build.js](kirtasiye-demo/pages/build.js) mevcut sayfaları kopyalayıp sunucu yerine [pages/mock-api.js](kirtasiye-demo/pages/mock-api.js)'i bağlar. Yerelde üretmek için: `node kirtasiye-demo/pages/build.js` (çıktı `_site/`).
+Hiçbir program indirmeden doğrudan şu adresten deneyebilirsin:
 
-## Kurulum (yalnızca bir kez)
+👉 **<https://ahmetyusufoguz.github.io/GTU_Kirtasiye_Demo/>**
 
-Kurulumu **yazıcıya bağlı bilgisayarda** yap. Teknik bilgi gerekmez, her adımda ne yapacağın yazıyor.
+Bu sürüm sunucu veya masaüstü uygulaması olmadan tamamen tarayıcında çalışır. Ekranın **sol alt köşesindeki `Demo: Müşteri | Kasa | Yazıcı` çubuğundan** üç ekranı ayrı sekmelerde açıp yan yana görebilirsin.
 
-**Neye ihtiyacın var?**
+### Adım Adım Test Senaryosu (Tarayıcıda)
+
+1. **Sipariş Ver (Müşteri Sekmesi):**
+   - Açılan sayfada kendi PDF dosyanı seç veya hazır dosya aramamak için **"📄 Örnek PDF ile doldur (3 sayfa)"** butonuna tıkla.
+   - Siyah-beyaz veya Renkli seçip **"Siparişi gönder"** butonuna bas.
+   - Ekranda **6 haneli sipariş kodun** ve **"Ödeme bekliyor"** durumu belirecek.
+2. **Kilidi Gör (Yazıcı Sekmesi):**
+   - Sol alttaki bar'dan **Yazıcı**'ya tıklayarak yeni sekmede yazıcı ekranını aç.
+   - Müşteri kodunu girip **"Aç"** butonuna bas.
+   - Sipariş bilgilerini ve **`🔒 Yazdırma kilitli`** butonunu göreceksin.
+3. **Ödemeyi Onayla (Kasa Sekmesi):**
+   - Sol alttaki bar'dan **Kasa**'ya tıklayarak kasa panelini aç ve **"Giriş yap"** de.
+   - Listede siparişi gör ve **"Ödendi"** butonuna bas.
+4. **Canlı Kilit Açılışını ve Çıktıyı Gör:**
+   - **Müşteri** sekmesine baktığında durumun otomatik olarak **"Ödendi, yazdırılabilir"** olduğunu göreceksin.
+   - **Yazıcı** sekmesine baktığında ise kilidin kendiliğinden açılıp butonun **`🔓 Yazdır`** olduğunu göreceksin.
+   - **"🔓 Yazdır"** butonuna basarak yazdırma penceresini aç; ardından **"✓ Çıktı alındı olarak işaretle"** butonuyla siparişi tamamla.
+
+> **Önemli Not:** Web demosunda veriler yalnızca açtığın tarayıcının hafızasında (`localStorage` + `IndexedDB`) tutulur; başka cihazlarla paylaşılmaz. Bu nedenle üç ekranı da **aynı tarayıcıdaki sekmelerde** açarak denemelisin.
+
+---
+
+## Yöntem 2: Bilgisayara Kurulum (Gerçek Telefon + Masaüstü Uygulaması)
+
+Sistemi gerçek bir kırtasiye ortamındaki gibi (bilgisayarda masaüstü uygulaması + telefondan QR kodla bağlanma) çalıştırmak için aşağıdaki adımları bir kez yapman yeterlidir. Teknik bilgi gerekmez.
+
+### Neye ihtiyacın var?
 
 - Windows 10 veya 11 yüklü bir bilgisayar
-- İnternet bağlantısı (kurulum sırasında gerekli dosyalar indirilir, sonrasında internet gerekmez)
-- Telefon ve bilgisayarın aynı ağa bağlı olması (örneğin telefonun hotspotunu açıp bilgisayarı ona bağlamak)
+- İnternet bağlantısı (yalnızca ilk kurulumda dosyaları indirmek için gerekir, sonrasında internet gerekmez)
+- Telefon ve bilgisayarın aynı ağa bağlı olması (örneğin telefonun kişisel erişim noktasını / hotspot'unu açıp bilgisayarı ona bağlamak)
 
-**Adım 1: Node.js'i kur (bilgisayarda yoksa)**
+### Adım 1: Node.js'i kur (bilgisayarda yoksa)
 
-Node.js, sistemin çalışması için gereken bir yardımcı programdır.
+Node.js, sistemin çalışması için gereken yardımcı programdır.
 
 1. <https://nodejs.org> adresine gir.
-2. Yeşil **"LTS"** yazan büyük butona tıkla, inen dosyayı aç.
-3. Açılan pencerelerde sürekli **"Next"** (İleri), en sonda **"Install"** (Kur) ve **"Finish"** (Bitir) de. Hiçbir ayarı değiştirmen gerekmez.
+2. Yeşil **"LTS"** yazan büyük butona tıkla ve inen kurulum dosyasını aç.
+3. Açılan pencerelerde sırasıyla **"Next"** (İleri), **"Install"** (Kur) ve **"Finish"** (Bitir) butonlarına bas. Hiçbir ayarı değiştirmen gerekmez.
 
-Kurulu olup olmadığını bilmiyorsan bu adımı atla. 2. adımda bilgisayar sana söyler.
+*(Bilgisayarında zaten kurulu olup olmadığını bilmiyorsan bu adımı atlayabilirsin; 2. adımda kurulum dosyası seni uyarır.)*
 
-**Adım 2: Kurulum dosyasını çalıştır**
+### Adım 2: Kurulum dosyasını çalıştır
 
-1. Proje klasörünü aç, içindeki **`kurulum.bat`** dosyasına çift tıkla.
-2. "Bu uygulamanın cihazınızda değişiklik yapmasına izin vermek istiyor musunuz?" sorusu gelirse **"Evet"**'e bas. (Telefonun bilgisayara bağlanabilmesi için güvenlik duvarına izin eklemek gerekiyor.)
-3. Siyah bir pencere açılır ve yazılar akar. Bu normaldir, **birkaç dakika sürebilir. Pencereyi kapatma.**
-4. En sonda **"KURULUM TAMAMLANDI"** yazısını görünce bir tuşa basıp pencereyi kapat.
+1. Bu projeyi bilgisayarına indir (veya ZIP olarak indirip klasöre çıkar).
+2. Klasörün içindeki **`kurulum.bat`** dosyasına çift tıkla.
+3. Windows *"Bu uygulamanın cihazınızda değişiklik yapmasına izin vermek istiyor musunuz?"* diye sorarsa **"Evet"**'e bas (telefonun bilgisayara bağlanabilmesi için güvenlik duvarı izni eklenir).
+4. Siyah bir pencere açılır ve kurulum başlar. **Birkaç dakika sürebilir, pencereyi kapatma.**
+5. **"KURULUM TAMAMLANDI"** yazısını gördüğünde bir tuşa basarak pencereyi kapat.
 
-Masaüstünde **"Kirtasiye Yazici"** adlı bir simge oluşur. Kurulum bu kadar.
+Masaüstünde **"Kirtasiye Yazici"** adlı bir simge oluşur. Kurulum tamamlandı!
 
-> **Hata çıkarsa:** Pencerede **"Node.js bulunamadi"** yazıyorsa Adım 1'i yap, sonra `kurulum.bat`'a tekrar çift tıkla. Başka bir hata yazıyorsa pencerenin ekran görüntüsünü alıp yardım iste.
+---
 
-## Çalıştırma
+## Kurulu Sistemi Çalıştırma ve Kullanma
+
+### 1. Yazıcı Bilgisayarı Uygulamasını Açma
 
 1. Masaüstündeki **"Kirtasiye Yazici"** simgesine çift tıkla.
-2. Yazıcı bilgisayarı uygulaması açılır. Sistemin geri kalanını (sunucuyu) **uygulama kendisi başlatır**, ayrıca bir şey açman gerekmez.
-3. Uygulamayı kapattığında sistem de tamamen kapanır.
+2. Yazıcı bilgisayarı uygulaması açılır. Arka plandaki sunucuyu **uygulama kendisi otomatik başlatır**; ekstra bir pencere veya komut açman gerekmez.
+3. Uygulamayı kapattığında sistem tamamen kapanır.
 
-Telefondan siteye girmek ve kasa ekranını açmak için aşağıdaki bölümlere bak.
+### 2. Telefondan Müşteri Sayfasına Girme
 
-### Telefondan siteye giriş
+1. Yazıcı uygulamasının sol tarafında bir **QR kod** ve adres (ör. `http://192.168.1.20:3000`) görünür.
+2. Telefonunun kamerasıyla bu QR kodu okut; müşteri sayfası doğrudan açılır.
+3. Ağ değiştiğinde IP adresi değişse bile QR kod her zaman güncel adresi gösterir.
 
-1. Yazıcı uygulamasının sol tarafında bir **QR kod** ve bir adres (örneğin `http://192.168.1.20:3000`) görünür.
-2. Telefonun kamerasıyla QR kodu okut. Müşteri sayfası açılır.
-3. Bilgisayarın IP adresi ağ değişince değişir. QR kod her zaman güncel adresi gösterir, adresi ezberlemene gerek yok.
+### 3. Kasa Ekranını Açma
 
-**Telefonda sayfa açılmazsa:**
+Kasa görevlisi, bilgisayarda herhangi bir internet tarayıcısı (Chrome, Edge vb.) açıp adres çubuğuna şunu yazar:
 
-- Telefon ve bilgisayar **aynı Wi-Fi veya hotspot'a** bağlı mı kontrol et.
-- Okul gibi bazı Wi-Fi ağları cihazların birbirini görmesini engeller. Telefonun kendi **hotspot**'unu açıp bilgisayarı ona bağlamak çoğu zaman çözer.
-- Kurulumda "Evet"e bastığından emin ol (telefonun bağlanabilmesi için gereken güvenlik duvarı izni orada eklenir). Emin değilsen `kurulum.bat`'a tekrar çift tıkla.
-
-### Kasa ekranını açma
-
-Kasa görevlisi bilgisayarda bir internet tarayıcısı (Chrome, Edge vb.) açıp adres çubuğuna şunu yazar:
-
-```
+```text
 http://localhost:3000/cashier.html
 ```
 
-Başka bir cihazdan açacaksa `localhost` yerine yazıcı uygulamasında görünen adresi kullan (örneğin `http://192.168.1.20:3000/cashier.html`).
+*(Kasa ekranı aynı ağdaki başka bir cihazdan açılacaksa `localhost:3000` yerine yazıcı uygulamasında yazan IP adresi kullanılır: ör. `http://192.168.1.20:3000/cashier.html`)*
 
-### Gelişmiş: terminalden çalıştırma (geliştiriciler için)
+### 4. Kasada Geri Alma / İade
 
-```powershell
-cd kirtasiye-demo
-npm install          # ilk seferde
-npm start            # sunucu
+Kasada işlem gören her siparişin yanında **"Geri al"** butonu bulunur ve onay alarak siparişi bir adım geri döndürür:
 
-cd desktop
-npm install          # ilk seferde
-npm start            # masaüstü uygulaması (ayrı terminalde)
-```
+- `Çıktı alındı` veya `Yazdırılıyor` → **`Ödendi`** (çıktıda sorun olduğunda tekrar yazdırmak için kilidi açar)
+- `Ödendi` → **`Ödeme bekliyor`** (ödeme iadesi durumunda yazdırmayı tekrar kilitler)
 
-Sunucu başka bir bilgisayardaysa: `$env:SERVER_URL="http://IP:3000"; npm start` (desktop klasöründe). Kısayolu elle yeniden oluşturmak için `desktop` klasöründe `powershell -ExecutionPolicy Bypass -File .\kisayol-olustur.ps1`.
+---
 
-## Kullanım
+## Ekranlar ve Görevleri
 
 | Ekran | Adres | Kim kullanır | Ne yapar |
 | --- | --- | --- | --- |
-| Müşteri sayfası | `/` | Müşteri (telefon) | PDF yükle, s&b/renkli seç, anlık fiyat, kod al, kodla sipariş sorgula |
-| Kasa paneli | `/cashier.html` | Kasa görevlisi | Kodla sipariş aç, "Ödendi" işaretle, canlı sipariş listesi, "Geri al" |
-| Yazıcı uygulaması | Electron | Yazıcı bilgisayarı | Siparişleri önceden indirir, kodla açar, ödeme onaylıysa yazdırır |
+| **Müşteri sayfası** | `/` | Müşteri (Telefon / Web) | PDF yükle (veya örnek PDF seç), s&b/renkli seç, anlık fiyat gör, kod al, canlı durum takip et |
+| **Kasa paneli** | `/cashier.html` | Kasa görevlisi | Kodla sipariş aç, "Ödendi" işaretle, canlı sipariş listesini gör, "Geri al" |
+| **Yazıcı uygulaması** | Electron / `printer.html` | Yazıcı bilgisayarı | Siparişleri önceden indirir, kodla açar, ödeme onaylanınca kilidi açıp yazdırır |
 
-Müşteri sayfasının altında "Kasa girişi", kasa giriş ekranında "Müşteri sayfasına dön" bağlantısı vardır.
+---
 
-### Örnek akış
-
-1. Telefondan müşteri sayfasını aç, PDF seç, baskı türünü seç, **"Siparişi gönder"** de ve kodu al.
-2. Yazıcı uygulamasına kodu gir: sipariş görünür, **"Yazdırma kilitli"** yazar.
-3. Kasa panelinde giriş yap, kodu aç, **"Ödemeyi aldım"** (veya listeden "Ödendi") de.
-4. Yazıcı uygulamasında kilit kendiliğinden açılır. **"Yazdır"**'a bas, yazıcıyı seç (fiziksel yazıcı yoksa "Microsoft Print to PDF").
-5. Yazdırma onaylanınca sipariş **"Çıktı alındı"** olur. Müşteri sayfasındaki sorgulamada da görünür.
-
-Kasa ve yazıcı uygulaması pencereleri yan yana tutulursa "Ödendi" basıldığında kilidin kendiliğinden açılması net görünür.
-
-### Geri alma (kasa)
-
-Kasada her siparişte "Geri al" butonu vardır. Bir adım geri götürür, onay ister:
-
-- `cikti_alindi` veya `yazdiriliyor` → `odendi` (sipariş yeniden yazdırılabilir, çıktıda sorun olduğunda kullanılır)
-- `odendi` → `bekliyor` (ödeme iadesi, yazdırma tekrar kilitlenir)
-
-## Fiyat ve kod
-
-- Fiyat sunucuda hesaplanır: `sayfa sayısı × birim fiyat`. Birim fiyatlar [server.js](kirtasiye-demo/server.js) içinde `PRICES` değişkenindedir (şu an siyah-beyaz 1 TL, renkli 5 TL, yer tutucudur, istediğin gibi değiştir).
-- Müşteri sayfasındaki anlık fiyat ön izlemedir, sayfa sayısı `/api/preview` ile sunucudan alınır.
-- Kod 6 karakterdir, harf ve rakam karışıktır, karışan karakterler (0/O, 1/I) yoktur, büyük/küçük harf duyarsızdır.
-
-## Sipariş durumları
-
-`bekliyor` → `odendi` → `yazdiriliyor` → `cikti_alindi`
-
-Yazdırma kilidi sunucuda zorlanır: ödenmemiş siparişte `yazdiriliyor` durumuna geçmek hata verir.
-
-## Teknoloji
-
-Node.js, Express, SQLite (`better-sqlite3`), düz HTML/JS sayfalar, Electron. PDF sayfa sayısı `pdf-lib` ile, QR kod `qrcode` ile üretilir.
-
-## Proje yapısı
-
-```
-kirtasiye-demo/
-├── server.js              Backend (Express + SQLite), müşteri ve kasa sayfalarını da servis eder
-├── package.json
-├── public/
-│   ├── index.html         Müşteri sayfası (mobil öncelikli)
-│   └── cashier.html       Kasa paneli (ayrı giriş ekranı, şifresiz)
-├── desktop/               Yazıcı bilgisayarı uygulaması (Electron)
-│   ├── main.js            Sunucu başlatma, eşitleme, indirme, yazdırma
-│   ├── preload.js
-│   ├── index.html         Uygulama arayüzü
-│   ├── kisayol-olustur.ps1  Masaüstü kısayolunu oluşturur
-│   └── package.json
-├── demo.db                (çalışırken oluşur) SQLite veritabanı
-└── uploads/               (çalışırken oluşur) yüklenen PDF'ler
-```
-
-## API
-
-| Yöntem | Adres | Açıklama |
-| --- | --- | --- |
-| GET | `/api/prices` | Birim fiyatlar |
-| POST | `/api/preview` | PDF alır, sayfa sayısını döner (kayıt yapmaz) |
-| POST | `/api/orders` | `file` + `color` (`bw`/`color`) ile sipariş oluşturur, `code`, `pages`, `price` döner |
-| GET | `/api/orders` | Tüm siparişler (kasa listesi, masaüstü eşitleme) |
-| GET | `/api/orders/:code` | Tek sipariş |
-| POST | `/api/orders/:code/pay` | `bekliyor` → `odendi` |
-| POST | `/api/orders/:code/undo` | Bir adım geri al (yukarıdaki "Geri alma" kuralları) |
-| GET | `/api/orders/:code/file` | PDF dosyası |
-| POST | `/api/orders/:code/status` | `{status}`: `yazdiriliyor` (sadece `odendi`'den), `cikti_alindi` (sadece `yazdiriliyor`'dan) |
-| GET | `/api/info` | Telefon bağlantı adresi ve QR (SVG) |
-
-## Masaüstü uygulaması (Electron)
-
-- Açılışta sunucu yoksa `node server.js` başlatır ve kapanırken durdurur.
-- 2 saniyede bir sunucuyu yoklar, durumu `cikti_alindi` olmayan siparişlerin PDF'ini önceden indirir (uygulama veri klasöründe `orders/`).
-- Kod girilince sipariş durumu 1,5 saniyede bir yenilenir, "Ödendi" olunca buton açılır.
-- Yazdırma: PDF yeni pencerede açılır, `webContents.print()` ile sistem yazdırma penceresi tetiklenir. Onaylanırsa durum otomatik `cikti_alindi` olur.
-- Yazdırma penceresi sorun çıkarırsa yedekler: **"Çıktı alındı olarak işaretle"** ve **"PDF'i sistem uygulamasında aç"** butonları.
-
-## Sorun giderme
+## Sorun Giderme
 
 | Sorun | Çözüm |
 | --- | --- |
-| Telefondan sayfa açılmıyor | Telefon ve bilgisayarın aynı Wi-Fi/hotspot'a bağlı olduğunu kontrol et. Okul gibi ağlar cihazları ayırabilir, telefonun hotspotunu kullan. Gerekirse `kurulum.bat`'ı tekrar çalıştır (güvenlik duvarı izni eklenir) |
-| Uygulamada "Sunucuya ulaşılamıyor" yazıyor | Uygulamayı kapatıp masaüstü simgesinden tekrar aç. Düzelmezse `kurulum.bat`'ı tekrar çalıştır. Node.js kurulu değilse önce kur (Kurulum, Adım 1) |
-| Yazdırma çıktısı açılırken "sharing violation" hatası | Çıktıyı yazan PDF yazıcısının hedef dosyası başka bir program tarafından açık tutuluyordur. Dosyayı kapat veya farklı bir ada kaydet |
-| Masaüstündeki "Kirtasiye Yazici" simgesi kayboldu | `kurulum.bat`'a tekrar çift tıkla, simge yeniden oluşur |
+| **Telefondan sayfa açılmıyor** | Telefon ve bilgisayarın aynı Wi-Fi veya hotspot ağına bağlı olduğundan emin ol. Okul/kampüs Wi-Fi ağları cihazları birbirinden izole edebilir; bu durumda **telefonun hotspot'unu** açıp bilgisayarı ona bağla. Gerekirse `kurulum.bat`'ı tekrar çalıştır. |
+| **Uygulamada "Sunucuya ulaşılamıyor" yazıyor** | Uygulamayı kapatıp masaüstündeki simgeden tekrar aç. Düzelmezse `kurulum.bat`'ı tekrar çalıştır. |
+| **Yazdırma çıktısı açılırken "sharing violation" hatası** | Sanal PDF yazıcısının kaydetmeye çalıştığı dosya başka bir programda açık kalmıştır. Açık PDF'i kapat veya farklı bir dosya adıyla kaydet. |
+| **Masaüstündeki "Kirtasiye Yazici" simgesi silindi** | `kurulum.bat` dosyasına tekrar çift tıkla; kısayol yeniden oluşturulur. |
 
-## Bilinen sınırlar (demo için bilerek)
+---
 
-- Kimlik doğrulama yok. Kasa girişi şifresizdir, `/api/orders/:code/pay` herkese açıktır.
-- 24 saatlik süre dolumu, dosya silme, "süresi geçti" ve "iptal/hata" durumları yok.
-- Log, ücret düzenleme, fiyat tablosu düzenleme, günlük özet yok. İade/yeniden basma sadece "Geri al" ile yapılır.
-- Çoklu dosya, tek/çift taraflı seçeneği, kağıt boyutu/türü yok. Sadece PDF.
-- IP başına sınır, captcha, yükleme boyutu dışında kötüye kullanım koruması yok.
-- Yüklenen PDF'ler `uploads/` içinde birikir, temizlenmez.
-- `multer` 1.x kullanılıyor (npm uyarı veriyor), demo için sorun değil.
-- Sadece Windows'ta denendi. Electron'daki yazdırma akışı farklı bilgisayar ve yazıcılarda tam doğrulanmadı (özellikle PDF'in boş basılması riski).
+## Teknik Detaylar (Geliştiriciler İçin)
+
+- **Teknoloji:** Node.js, Express, SQLite (`better-sqlite3`), Vanilla HTML/CSS/JS, Electron, `pdf-lib`, `qrcode`.
+- **Fiyat ve Kod:** Fiyat sunucuda `sayfa sayısı × birim fiyat` olarak hesaplanır (`server.js` içindeki `PRICES`: S&B 1 TL, Renkli 5 TL). Sipariş kodu 6 karakterdir, karışan karakterler (`0/O`, `1/I`) içermez, büyük/küçük harf duyarsızdır.
+- **Sipariş Durumları:** `bekliyor` → `odendi` → `yazdiriliyor` → `cikti_alindi`. Yazdırma kilidi sunucu tarafında da zorlanır.
+- **Web Demosu Derlemesi:** `node kirtasiye-demo/pages/build.js` komutu sayfaları `_site/` klasörüne kopyalar ve `mock-api.js` dosyasını bağlar. `main` dalına her push yapıldığında `.github/workflows/pages.yml` ile GitHub Pages'e otomatik yayınlanır.
+
+### Proje Yapısı
+
+```text
+GTU_Kirtasiye_Demo/
+├── kurulum.bat                Tek tıkla kurulum (bağımlılıklar, kısayol, güvenlik duvarı)
+├── .github/workflows/
+│   └── pages.yml              GitHub Pages otomatik yayınlama akışı
+└── kirtasiye-demo/
+    ├── server.js              Backend (Express + SQLite)
+    ├── package.json
+    ├── public/
+    │   ├── index.html         Müşteri sayfası (mobil öncelikli, canlı durum takipli)
+    │   └── cashier.html       Kasa paneli
+    ├── desktop/               Yazıcı bilgisayarı uygulaması (Electron)
+    │   ├── main.js            Otomatik sunucu başlatma, ön indirme, yazdırma
+    │   ├── preload.js
+    │   ├── index.html         Masaüstü arayüzü
+    │   ├── kisayol-olustur.ps1
+    │   └── package.json
+    └── pages/                 GitHub Pages statik web demosu
+        ├── build.js           Statik site derleyicisi
+        └── mock-api.js        Tarayıcı içi sahte backend (localStorage + IndexedDB)
+```
+
+### Terminalden Çalıştırma (İsteğe Bağlı)
+
+```powershell
+cd kirtasiye-demo
+npm install
+npm start            # Sunucuyu başlatır (http://localhost:3000)
+
+cd desktop
+npm install
+npm start            # Electron uygulamasını başlatır
+```
+
+### API Uç Noktaları
+
+| Yöntem | Adres | Açıklama |
+| --- | --- | --- |
+| GET | `/api/prices` | Birim fiyatlar (`bw`, `color`) |
+| POST | `/api/preview` | PDF alır, sayfa sayısını döner (kayıt yapmaz) |
+| POST | `/api/orders` | `file` + `color` ile sipariş oluşturur; `code`, `pages`, `price` döner |
+| GET | `/api/orders` | Tüm siparişler (kasa listesi ve masaüstü ön indirme döngüsü) |
+| GET | `/api/orders/:code` | Tek sipariş sorgulama |
+| POST | `/api/orders/:code/pay` | Durumu `bekliyor` → `odendi` yapar |
+| POST | `/api/orders/:code/undo` | Durumu bir adım geri alır (`cikti_alindi`/`yazdiriliyor` → `odendi` → `bekliyor`) |
+| GET | `/api/orders/:code/file` | Siparişin PDF dosyasını döner |
+| POST | `/api/orders/:code/status` | Yazdırma durumu günceller (`yazdiriliyor`, `cikti_alindi`) |
+| GET | `/api/info` | Yerel ağ bağlantı adresi ve QR kodu (SVG) |
+
+### Bilinen Sınırlar (Demo Kapsamı)
+
+- Kimlik doğrulama yoktur; kasa girişi şifresizdir.
+- 24 saatlik süre dolumu, otomatik dosya temizleme, çoklu dosya, kağıt boyutu ve tek/çift yön seçenekleri demo kapsamı dışındadır.
+- Yalnızca PDF kabul edilir.

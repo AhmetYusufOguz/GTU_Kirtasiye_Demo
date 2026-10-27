@@ -270,6 +270,45 @@
         background: #e0f1f8;
         color: var(--cyan-dark);
       }
+      @keyframes statusPulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(10, 132, 182, 0.5); }
+        40% { transform: scale(1.06); box-shadow: 0 0 0 10px rgba(10, 132, 182, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(10, 132, 182, 0); }
+      }
+      .badge.pulse {
+        animation: statusPulse 0.8s ease-out;
+      }
+      .sample-btn {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 6px 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--muted);
+        font: 600 13px/1.3 inherit;
+        cursor: pointer;
+        transition: border-color 0.15s, color 0.15s, background 0.15s;
+      }
+      .sample-btn:hover {
+        border-color: var(--cyan);
+        color: var(--cyan-dark);
+        background: #f0f8fc;
+      }
+      .live-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+        margin-right: 6px;
+        vertical-align: middle;
+        animation: blinkDot 1.6s infinite ease-in-out;
+      }
+      @keyframes blinkDot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.35; }
+      }
       .staff {
         text-align: center;
         margin-top: 24px;
@@ -291,6 +330,11 @@
           <button type="button" class="filebtn" id="pick">
             PDF dosyası seç
           </button>
+          <div style="text-align: right">
+            <button type="button" class="sample-btn" id="sampleBtn">
+              📄 Örnek PDF ile doldur (3 sayfa)
+            </button>
+          </div>
           <input type="file" id="file" accept="application/pdf,.pdf" />
           <p class="fileinfo hidden" id="fileInfo"></p>
 
@@ -330,6 +374,9 @@
           <p class="lbl">Sipariş kodun</p>
           <div class="code" id="codeText"></div>
           <div class="perf"></div>
+          <div style="margin-bottom: 10px">
+            <span class="badge" id="resBadge"></span>
+          </div>
           <p class="warn">Kodunu kaybetme. Kod olmadan çıktı alınamaz.</p>
           <p class="meta" id="resMeta"></p>
           <button class="ghost" id="copy">Kodu kopyala</button>
@@ -358,16 +405,21 @@
     </main>
 
     <script>
+      const SAMPLE_PDF_B64 =
+        "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";
+
       const LABEL = {
         bekliyor: "Ödeme bekliyor",
         odendi: "Ödendi, yazdırılabilir",
         yazdiriliyor: "Yazdırılıyor",
-        cikti_alindi: "Çıktı alındı",
+        cikti_alindi: "Çıktı alındı ✓",
       };
       const $ = (id) => document.getElementById(id);
       let prices = { bw: 1, color: 5 },
         pages = 0,
-        current = null;
+        current = null,
+        trackedCode = null,
+        lastStatus = null;
 
       const money = (n) =>
         n.toLocaleString("tr-TR", {
@@ -399,8 +451,7 @@
         .querySelectorAll("input[name=color]")
         .forEach((r) => (r.onchange = updatePrice));
 
-      $("file").onchange = async () => {
-        const f = $("file").files[0];
+      async function handlePdfFile(f) {
         pages = 0;
         current = null;
         $("send").disabled = true;
@@ -432,7 +483,30 @@
           $("fileInfo").classList.add("hidden");
           $("err").textContent = e.message;
         }
+      }
+
+      $("file").onchange = () => handlePdfFile($("file").files[0]);
+
+      $("sampleBtn").onclick = () => {
+        const bin = atob(SAMPLE_PDF_B64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        const sampleFile = new File([bytes], "Ornek_Ders_Notu.pdf", {
+          type: "application/pdf",
+        });
+        handlePdfFile(sampleFile);
       };
+
+      function renderBadge(el, status, changed) {
+        el.className = "badge " + status + (changed ? " pulse" : "");
+        el.innerHTML = "";
+        if (status !== "cikti_alindi") {
+          const dot = document.createElement("span");
+          dot.className = "live-dot";
+          el.append(dot);
+        }
+        el.append(LABEL[status] || status);
+      }
 
       $("send").onclick = async () => {
         if (!current) return;
@@ -448,9 +522,13 @@
           $("codeText").textContent = d.code;
           $("resMeta").textContent =
             `${d.pages} sayfa · ${color() === "bw" ? "Siyah-beyaz" : "Renkli"} · ${money(d.price)}. Ödemeyi kasada yaparsın.`;
+          renderBadge($("resBadge"), "bekliyor", false);
           $("orderForm").classList.add("hidden");
           $("result").classList.remove("hidden");
           $("q").value = d.code;
+          trackedCode = d.code;
+          lastStatus = "bekliyor";
+          lookup(true);
         } catch (e) {
           $("err").textContent = e.message;
           $("send").disabled = false;
@@ -485,29 +563,53 @@
         updatePrice();
       };
 
-      async function lookup() {
-        const code = $("q").value.trim();
+      async function lookup(silent = false) {
+        const code = ($("q").value.trim() || trackedCode || "").toUpperCase();
         if (!code) return;
         const box = $("qres");
-        box.textContent = "";
-        const r = await fetch("/api/orders/" + encodeURIComponent(code));
-        const d = await r.json();
-        if (!r.ok) {
-          box.textContent = d.error;
-          return;
+        try {
+          const r = await fetch("/api/orders/" + encodeURIComponent(code));
+          const d = await r.json();
+          if (!r.ok) {
+            if (!silent) {
+              box.textContent = d.error;
+              trackedCode = null;
+            }
+            return;
+          }
+          trackedCode = d.code;
+          const changed = lastStatus !== null && lastStatus !== d.status;
+          lastStatus = d.status;
+
+          box.textContent = "";
+          const badge = document.createElement("span");
+          renderBadge(badge, d.status, changed);
+          const info = document.createElement("div");
+          info.style.color = "var(--muted)";
+          info.style.marginTop = "4px";
+          info.textContent = `${d.fileName} · ${d.pages} sayfa · ${d.color === "bw" ? "Siyah-beyaz" : "Renkli"} · ${money(d.price)}`;
+          box.append(badge, info);
+
+          if ($("codeText").textContent === d.code) {
+            renderBadge($("resBadge"), d.status, changed);
+          }
+        } catch {
+          /* ağ geçici kesintisinde sessiz kal */
         }
-        const badge = document.createElement("span");
-        badge.className = "badge " + d.status;
-        badge.textContent = LABEL[d.status] || d.status;
-        const info = document.createElement("div");
-        info.style.color = "var(--muted)";
-        info.textContent = `${d.fileName} · ${d.pages} sayfa · ${d.color === "bw" ? "Siyah-beyaz" : "Renkli"} · ${money(d.price)}`;
-        box.append(badge, info);
       }
-      $("lookup").onclick = lookup;
-      $("q").onkeydown = (e) => {
-        if (e.key === "Enter") lookup();
+      $("lookup").onclick = () => {
+        lastStatus = null;
+        lookup(false);
       };
+      $("q").onkeydown = (e) => {
+        if (e.key === "Enter") {
+          lastStatus = null;
+          lookup(false);
+        }
+      };
+      setInterval(() => {
+        if (trackedCode) lookup(true);
+      }, 2000);
     </script>
   </body>
 </html>

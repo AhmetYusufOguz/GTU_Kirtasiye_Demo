@@ -195,6 +195,10 @@
 
   // Ekranlar arası geçiş çubuğu
   document.addEventListener('DOMContentLoaded', () => {
+    const hint = document.getElementById('connHint');
+    if (hint) {
+      hint.innerHTML = 'Web demosu verileri bu tarayıcıda tutar. Test için sol alttan <b>Müşteri</b> sekmesini açın.';
+    }
     const here = location.pathname.split('/').pop() || 'index.html';
     const nav = document.createElement('nav');
     nav.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:9999;display:flex;gap:4px;align-items:center;' +
