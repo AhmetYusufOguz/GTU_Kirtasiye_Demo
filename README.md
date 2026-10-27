@@ -2,6 +2,9 @@
 
 Kırtasiyede çıktı alma sürecindeki iki darboğazı (yazıcı bilgisayarı başında dosya bulma ve kasada sayfa sayma) ortadan kaldıran sistemin demosu. GTÜ Yapay Zekâ Kulübü **"Claude's Plan"** yarışması için hazırlandı.
 
+> 🎬 **Demo Videosu:** [Tüm akışı videodan izlemek için tıklayın (Google Drive)](https://drive.google.com/file/d/13lVFijzIIhb4o5ZJWNfXU7rEu3FuKpY5/view?usp=drive_link)  
+> 🌐 **Canlı Web Demosu (Kurulumsuz):** [ahmetyusufoguz.github.io/GTU_Kirtasiye_Demo](https://ahmetyusufoguz.github.io/GTU_Kirtasiye_Demo/)
+
 ## Ne işe yarar?
 
 **Eski süreç:** Müşteri dosyayı kırtasiyenin mailine atar, yazıcıya bağlı bilgisayarda mail bulunup dosya indirilir, çıktı ayarları yapılır, yazdırılır. Sonra kasada sayfalar elle sayılıp ücret hesaplanır.
